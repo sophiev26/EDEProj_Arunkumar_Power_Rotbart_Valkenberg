@@ -10,14 +10,15 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
-library(tidyverse)
+library(tidyverse) 
+
 ```
 
 
 ```{r}
 # Set your working directory
-
-
+getwd()
+setwd("/home/guest/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
 
 ```
 
@@ -29,7 +30,8 @@ Ak_data <-
 ```
 
 # Rationale and Research Questions
-
+How does tree height vary with diameter across different species in Alaska's
+forests?
 
 
 
@@ -93,7 +95,6 @@ ggplot(Species.wanted, aes(x = Species, y = HT, color = factor(Species))) +
        y = "Height",
        color = "Species Code")
 
-
 ```
 
 (The other 3 species being compared to black spruce: This can be deleted just letting you know)
@@ -108,7 +109,6 @@ b.w.spruces <- Species.wanted %>%
 BlackvWhiteSpruce <- aov(HT~Species, data = b.w.spruces)
 
 summary.aov(BlackvWhiteSpruce)
-
 ```
 
 

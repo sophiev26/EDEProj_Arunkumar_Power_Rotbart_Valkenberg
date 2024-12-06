@@ -30,8 +30,14 @@ Ak_data <-
 ```
 
 # Rationale and Research Questions
-How does tree height vary with diameter across different species in Alaska's
-forests?
+  We all chose the topic of tree heights because it is one of the main things that our foursome has in common, as two of us are in the forestry program, while the other two are TFE. In addition, we all found a similar interest of not only how tree heights vary with tree diameter and species, but also these factor in trees of a region unknown to us. 
+
+
+	The reason we chose this particular dataset is because of none of us have any experience traveling or even reading about Alaska. Our ignorance, combined with the dataset including height, DBH, and species codes, motivated us to use this dataset to answer our questions. Additionally, the data comes from the United States Forest Service, which is a group we all have learned much about and wanted to interact with. 
+
+Q: How does tree height vary across Alaska’s forests?
+-	How does this height vary with DBH?
+-	How does this height vary with species?
 
 
 
@@ -130,6 +136,10 @@ summary.aov(BlackvWhiteSpruce)
 \newpage
 
 # Dataset Information
+Data was collected...
+
+Once the data was added to our catalog we...
+
 
 
 

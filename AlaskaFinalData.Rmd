@@ -1,0 +1,181 @@
+---
+title: "Variability in tree height and diameter across different
+species in Alaska, USA"
+author: "Vignesh Arunkumar, Aidan Power, Brynn Rotbart, Sophie Valkenberg"
+date: "2024-12-03"
+output: html_document
+---
+```{r setup, include=FALSE}
+#Loading Packages
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+
+```
+
+
+```{r}
+# Set your working directory
+getwd()
+setwd("/home/guest/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
+
+```
+
+
+```{r}
+# Load your datasets
+Ak_data <- 
+  read.csv('~/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
+```
+
+# Rationale and Research Questions
+  We all chose the topic of tree heights because it is one of the main things that our foursome has in common, as two of us are in the forestry program, while the other two are TFE. In addition, we all found a similar interest of not only how tree heights vary with tree diameter and species, but also these factor in trees of a region unknown to us. 
+
+
+	The reason we chose this particular dataset is because of none of us have any experience traveling or even reading about Alaska. Our ignorance, combined with the dataset including height, DBH, and species codes, motivated us to use this dataset to answer our questions. Additionally, the data comes from the United States Forest Service, which is a group we all have learned much about and wanted to interact with. 
+
+Q: How does tree height vary across Alaska’s forests?
+-	How does this height vary with DBH?
+-	How does this height vary with species?
+
+
+
+```{r}
+#Filtering for Species
+Species.wanted <- Ak_data %>%
+  filter(SPCD %in% c(94, 95, 108, 264))
+Species.wanted <- Species.wanted %>%
+  mutate(Species = case_when(
+    SPCD == 94 ~ "White Spruce",
+    SPCD == 95 ~ "Black Spruce",
+    SPCD == 108 ~ "Lodgepole Pine",
+    SPCD == 264 ~ "Mountain Hemlock"
+  ))
+```
+
+
+```{r}
+# Set your ggplot theme
+
+
+```
+
+
+```{r}
+#Linear Regression to see correlation between HT and DIA for all Species in Data
+All.species.AK <- lm(HT ~ DIA, data = Ak_data)
+summary(All.species.AK)
+
+ggplot(Ak_data, aes(x = DIA, y = HT)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Tree Height vs Diameter in Alaska",
+       x = "Diameter",
+       y = "Height")
+
+```
+
+
+
+
+
+```{r}
+#Linear Regression to see correlation between HT and DIA taking into account 
+#four species. 
+species.model <- lm(HT ~ DIA + Species, data = Species.wanted)
+summary(species.model)
+
+ggplot(Species.wanted, aes(x = DIA, y = HT, color = factor(Species))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Tree Height vs Diameter by Species",
+       x = "Diameter",
+       y = "Height",
+       color = "Species Code")
+
+ggplot(Species.wanted, aes(x = Species, y = HT, color = factor(Species))) +
+  geom_boxplot()+
+  labs(title = "Tree Height by Species",
+       x = "Species",
+       y = "Height",
+       color = "Species Code")
+
+```
+
+(The other 3 species being compared to black spruce: This can be deleted just letting you know)
+
+
+
+
+```{r}
+#Mean Height of Black Spruce compared to Mean Height of White Spruce
+b.w.spruces <- Species.wanted %>%
+  filter(SPCD %in% c(94, 95))
+BlackvWhiteSpruce <- aov(HT~Species, data = b.w.spruces)
+
+summary.aov(BlackvWhiteSpruce)
+```
+
+
+
+
+\newpage
+\tableofcontents 
+\newpage
+\listoftables 
+\newpage
+\listoffigures 
+\newpage
+
+
+
+
+
+
+\newpage
+
+# Dataset Information
+Data was collected...
+
+Once the data was added to our catalog we...
+
+
+
+
+\newpage
+
+# Exploratory Analysis 
+
+
+
+\newpage
+
+# Analysis
+
+
+
+## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>
+
+## Question 2: 
+
+
+
+
+\newpage
+
+# Summary and Conclusions
+
+
+\newpage
+
+# References
+<add references here if relevant, otherwise delete this section> 
+
+
+
+
+
+
+
+

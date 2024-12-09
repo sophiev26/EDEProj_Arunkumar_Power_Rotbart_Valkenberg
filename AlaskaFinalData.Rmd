@@ -202,8 +202,16 @@ Data was collected using both remote sensing and ground sampling. Remote sensing
 
 Once we downloaded the dataset, our process of data wrangling involved differentiating the trees by species. We placed a special emphasis on this due to how the dataset only provides species codes, not the the names of the species themselves. Therefore, we filtered for the four most common species, changing their codes into their species names in a new separate column. We also turned everything in this species column to a factor in order to for it to fit in the analysis. 
 
-Coming soon...table!
-
+| Item Name | Value |
+|-------:|:------|
+|INVYR|Year of inventory|
+|SPCD|Species code|
+|DIA|Diameter at breast height (in)|
+|HT|Total height (ft)|
+|AGEDIA|Tree age at diameter (years)|
+|METHOD|Method for determining site index (1:collected this inventory 2:collected last inventory 3:estimated 4:height-intercept method this inventory)|
+|SITREE_FVS|Site index of tree (height that tree is expected to attain at reference age)|
+|SIBASE_FVS|Site index base age (Set in years to the closest rotation/culmination year of mean annual increment)|
 
 
 

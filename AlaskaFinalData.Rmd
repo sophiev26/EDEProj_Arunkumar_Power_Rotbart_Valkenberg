@@ -198,9 +198,11 @@ ggplot(random_plot_subset, aes(x = Species, y = HT, color = PLOT)) +
 \newpage
 
 # Dataset Information
-Data was collected...
+Data was collected using both remote sensing and ground sampling. Remote sensing was used to group the trees into classes based on similar strata, and used stratum weight as well as known total area to estimate population totals. Ground sampling was done via plots to cover a one-acre sample area, with those plots either being new or re-measurements of old plots. Among the variables measured were tree diameter, height, and species, all three being very important to our research questions and subsequent analysis. 
 
-Once the data was added to our catalog we...
+Once we downloaded the dataset, our process of data wrangling involved differentiating the trees by species. We placed a special emphasis on this due to how the dataset only provides species codes, not the the names of the species themselves. Therefore, we filtered for the four most common species, changing their codes into their species names in a new separate column. We also turned everything in this species column to a factor in order to for it to fit in the analysis. 
+
+Coming soon...table!
 
 
 

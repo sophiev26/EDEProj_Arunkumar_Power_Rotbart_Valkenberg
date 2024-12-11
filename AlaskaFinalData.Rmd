@@ -1,0 +1,253 @@
+---
+title: "Variability in tree height and diameter across different
+author: "Vignesh Arunkumar, Aidan Power, Brynn Rotbart, Sophie Valkenberg"
+date: "2024-12-03"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Setting up our R Workspace
+```{r setup, include=FALSE}
+#Loading Packages
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+
+```
+
+
+```{r}
+# Set your working directory
+getwd()
+setwd("/home/guest/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
+
+```
+
+
+```{r}
+# Load your datasets
+Ak_data <- 
+  read.csv('~/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
+```
+
+# Rationale and Research Questions
+  We all chose the topic of tree heights because it is one of the main things that our foursome has in common, as two of us are in the forestry program, while the other two are TFE. In addition, we all found a similar interest of not only how tree heights vary with tree diameter and species, but also these factor in trees of a region unknown to us. 
+
+
+	The reason we chose this particular dataset is because of none of us have any experience traveling or even reading about Alaska. Our ignorance, combined with the dataset including height, DBH, and species codes, motivated us to use this dataset to answer our questions. Additionally, the data comes from the United States Forest Service, which is a group we all have learned much about and wanted to interact with. 
+
+Q: How does tree height vary across Alaska’s forests?
+-	How does this height vary with DBH?
+-	How does this height vary with species?
+
+
+# Data Wrangling 
+```{r}
+#Filtering for Species
+Species.wanted <- Ak_data %>%
+  filter(SPCD %in% c(94, 95, 108, 264))
+Species.wanted <- Species.wanted %>%
+  mutate(Species = case_when(
+    SPCD == 94 ~ "White Spruce",
+    SPCD == 95 ~ "Black Spruce",
+    SPCD == 108 ~ "Lodgepole Pine",
+    SPCD == 264 ~ "Mountain Hemlock" 
+  ))
+Species.wanted$Species <- as.factor(Species.wanted$Species)
+Species.wanted$PLOT <- as.factor(Species.wanted$PLOT)
+```
+
+## GGPlot Theme Setup 
+```{r}
+# Set your ggplot theme
+
+
+```
+
+
+# Linear Regressions
+## Correlation between Height and Diameter for all Species
+```{r}
+#Linear Regression to see correlation between HT and DIA for all Species in Data
+All.species.AK <- lm(HT ~ DIA, data = Ak_data)
+summary(All.species.AK)
+
+ggplot(Ak_data, aes(x = DIA, y = HT)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Tree Height vs Diameter in Alaska",
+       x = "Diameter",
+       y = "Height")
+
+```
+
+
+
+
+## Correlation between Height and Diameter taking Species of Interest into Account
+```{r}
+#Linear Regression to see correlation between HT and DIA taking into account 
+#four species. 
+species.model <- lm(HT ~ DIA + Species, data = Species.wanted)
+summary(species.model)
+
+ggplot(Species.wanted, aes(x = DIA, y = HT, color = Species)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Tree Height vs Diameter by Species",
+       x = "Diameter",
+       y = "Height",
+       color = "Species Code")
+
+```
+
+## Correlation between Height and Diameter taking Species of Interest and Plot ID into Account
+```{r}
+#Linear regression to see correlation between HT and DIA taking into account
+#four species and plot ID
+PlotandSpecies.model <- lm(HT ~ DIA + Species + PLOT, data = Species.wanted)
+summary(PlotandSpecies.model)
+
+#can't visualize this linear regression because there's too many different #s of plots (can delete after y'all read this)
+
+```
+
+## ANOVA Tests
+```{r}
+#ANOVA tests for HT and DIA correlation
+
+#ANOVA with species interaction
+species.model.anova <- aov(HT ~ DIA + Species, 
+                           data = Species.wanted)
+summary(species.model.anova)
+
+#ANOVA with species and plot interaction
+PlotandSpecies.model.anova <- aov(HT ~ DIA + Species + PLOT, 
+                                  data = Species.wanted)
+summary(PlotandSpecies.model.anova)
+
+```
+
+The ANOVA results suggest that diameter has the highest influence on tree height, as expected. Additionally, it suggests that both species and plot number have a significant influence on tree height. The influence of plot is smaller than that of diameter and tree species. These results will be explored further in the following sections. 
+
+
+## Mean Height Comparisons 
+```{r}
+#Boxplot of Tree Height by Species
+ggplot(Species.wanted, aes(x = Species, y = HT, color = Species)) +
+  geom_boxplot()+
+  labs(title = "Tree Height by Species",
+       x = "Species",
+       y = "Height",
+       color = "Species Code")
+
+#(The other 3 species being compared to black spruce: This can be deleted just letting you know)
+
+#Mean Height of Black Spruce compared to Mean Height of White Spruce
+b.w.spruces <- Species.wanted %>%
+  filter(SPCD %in% c(94, 95))
+BlackvWhiteSpruce <- aov(HT~Species, data = b.w.spruces)
+
+summary.aov(BlackvWhiteSpruce)
+
+```
+
+## Visualizing Interactions with Plot Differences
+```{r}
+random_plot_subset <- Species.wanted[sample(nrow(Species.wanted), size = 15, 
+                                            replace = FALSE), ]
+
+#Plot showing relationship between PLOT and HT (random sample)
+ggplot(random_plot_subset, aes(x = PLOT, y = HT)) +
+  geom_boxplot(aes(color = PLOT)) +
+  labs(title = "Tree Height by Plot (Random Sample)",
+       x = "Plot",
+       y = "Height") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  theme(legend.position = "none")
+
+#Plot showing relationship between HT, PLOT, and Species (random sample)
+ggplot(random_plot_subset, aes(x = Species, y = HT, color = PLOT)) +
+  geom_boxplot() +
+  labs(title = "Tree Height by Species and Plot (Random Sample)",
+       x = "Species",
+       y = "Height",
+       color = "Plot Code") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(legend.position = "bottom")
+
+```
+
+
+
+\newpage
+\tableofcontents 
+\newpage
+\listoftables 
+\newpage
+\listoffigures 
+\newpage
+
+
+
+
+
+
+\newpage
+
+# Dataset Information
+Data was collected using both remote sensing and ground sampling. Remote sensing was used to group the trees into classes based on similar strata, and used stratum weight as well as known total area to estimate population totals. Ground sampling was done via plots to cover a one-acre sample area, with those plots either being new or re-measurements of old plots. Among the variables measured were tree diameter, height, and species, all three being very important to our research questions and subsequent analysis. 
+
+Once we downloaded the dataset, our process of data wrangling involved differentiating the trees by species. We placed a special emphasis on this due to how the dataset only provides species codes, not the the names of the species themselves. Therefore, we filtered for the four most common species, changing their codes into their species names in a new separate column. We also turned everything in this species column to a factor in order to for it to fit in the analysis. 
+
+| Item Name | Value |
+|-------:|:------|
+|INVYR|Year of inventory|
+|SPCD|Species code|
+|DIA|Diameter at breast height (in)|
+|HT|Total height (ft)|
+|AGEDIA|Tree age at diameter (years)|
+|METHOD|Method for determining site index (1:collected this inventory 2:collected last inventory 3:estimated 4:height-intercept method this inventory)|
+|SITREE_FVS|Site index of tree (height that tree is expected to attain at reference age)|
+|SIBASE_FVS|Site index base age (Set in years to the closest rotation/culmination year of mean annual increment)|
+
+
+
+\newpage
+
+# Exploratory Analysis 
+
+
+
+\newpage
+
+# Analysis
+
+
+
+## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>
+
+## Question 2: 
+
+
+
+
+\newpage
+
+# Summary and Conclusions
+
+
+\newpage
+
+# References
+<add references here if relevant, otherwise delete this section> 
+
+
+
+
+
+
+
+

@@ -1,8 +1,9 @@
 ---
-title: "Variability in tree height and diameter across different
+title: "Variability in tree height and diameter across different"
 author: "Vignesh Arunkumar, Aidan Power, Brynn Rotbart, Sophie Valkenberg"
 date: "2024-12-03"
-output: html_document
+output: pdf_document
+fig_caption: True
 editor_options: 
   chunk_output_type: console
 ---
@@ -25,18 +26,18 @@ library(tidyverse)
 ```
 
 
-```{r}
+```{r working directory, echo=FALSE}
 # Set your working directory
 getwd()
-setwd("/home/guest/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
+setwd("/home/guest/Project/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
 
 ```
 
 
-```{r}
+```{r import file, echo=FALSE}
 # Load your datasets
 Ak_data <- 
-  read.csv('~/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
+  read.csv('~/Project/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
 ```
 
 # Rationale and Research Questions
@@ -56,9 +57,13 @@ Following questions to help us further understand the differences in these speci
 
 
 # Data Wrangling 
-```{r}
+```{r Data Wrangling, echo=FALSE}
+#Filtering for wanted columns
+Ak_data.wrangled <- Ak_data %>% 
+  select(PLOT, SPCD, DIA, HT)
+
 #Filtering for Species
-Species.wanted <- Ak_data %>%
+Species.wanted <- Ak_data.wrangled %>%
   filter(SPCD %in% c(94, 95, 108, 264))
 Species.wanted <- Species.wanted %>%
   mutate(Species = case_when(
@@ -72,7 +77,7 @@ Species.wanted$PLOT <- as.factor(Species.wanted$PLOT)
 ```
 
 ## GGPlot Theme Setup 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Set your ggplot theme
 
 our_theme <- theme(
@@ -81,7 +86,9 @@ our_theme <- theme(
   plot.background = element_rect(fill = "#006400",color = NA), 
   panel.background = element_rect(fill = "#b2e6b2", color = NA),
   plot.title = element_text(face = "bold", color="white", hjust = 0.5),           
-  plot.subtitle = element_text(face = "bold", color="white", hjust = 0.5)         
+  plot.subtitle = element_text(face = "bold", color="white", hjust = 0.5),
+  axis.title.x = element_text(color="white"),
+  axis.title.y = element_text(angle=90, color="white")
 )
 theme_set(our_theme)
 ```
@@ -91,10 +98,10 @@ theme_set(our_theme)
 ## Correlation between Height and Diameter for all Species
 ```{r}
 #Linear Regression to see correlation between HT and DIA for all Species in Data
-All.species.AK <- lm(HT ~ DIA, data = Ak_data)
+All.species.AK <- lm(HT ~ DIA, data = Ak_data.wrangled)
 summary(All.species.AK)
 
-ggplot(Ak_data, aes(x = DIA, y = HT)) +
+ggplot(Ak_data.wrangled, aes(x = DIA, y = HT)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(title = "Tree Height vs Diameter in Alaska",
@@ -122,19 +129,16 @@ ggplot(Species.wanted, aes(x = DIA, y = HT, color = Species)) +
 ```
 
 ## Correlation between Height and Diameter taking Species of Interest and Plot ID into Account
-```{r}
+```{r, echo=FALSE}
 #Linear regression to see correlation between HT and DIA taking into account
 #four species and plot ID
 PlotandSpecies.model <- lm(HT ~ DIA + Species + PLOT, data = Species.wanted)
 summary(PlotandSpecies.model)
 
-#can't visualize this linear regression because there's too many different #s of plots (can delete after y'all read this)
-
 ```
 
 ## ANOVA Tests
-```{r}
-#ANOVA tests for HT and DIA correlation
+```{r, echo=FALSE}
 
 #ANOVA with species interaction
 species.model.anova <- aov(HT ~ DIA + Species, 
@@ -256,15 +260,6 @@ print(all_TukeyResults)
 random_plot_subset <- Species.wanted[sample(nrow(Species.wanted), size = 15, 
                                             replace = FALSE), ]
 
-#Plot showing relationship between PLOT and HT (random sample)
-ggplot(random_plot_subset, aes(x = PLOT, y = HT)) +
-  geom_boxplot(aes(color = PLOT)) +
-  labs(title = "Tree Height by Plot (Random Sample)",
-       x = "Plot",
-       y = "Height") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-  theme(legend.position = "none")
-
 #Plot showing relationship between HT, PLOT, and Species (random sample)
 ggplot(random_plot_subset, aes(x = Species, y = HT, color = PLOT)) +
   geom_boxplot() +
@@ -272,8 +267,9 @@ ggplot(random_plot_subset, aes(x = Species, y = HT, color = PLOT)) +
        x = "Species",
        y = "Height",
        color = "Plot Code") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  theme(legend.position = "bottom")
+  theme(axis.text.x = element_text(angle = -45, hjust = 1)) +
+  theme(legend.position = "right")+
+  scale_x_discrete(position = "top")
 
 ```
 \newpage
@@ -299,6 +295,16 @@ Once we downloaded the dataset, our process of data wrangling involved different
 # Exploratory Analysis 
 graphs for variables of interest, maps, basic stuff people might want to know about the data 
 
+## Correlation between Height and Diameter taking Species of Interest and Plot ID into Account
+```{r Correlation between Height + DIA + SPCD + PLOT}
+#Linear regression to see correlation between HT and DIA taking into account
+#four species and plot ID
+PlotandSpecies.model <- lm(HT ~ DIA + Species + PLOT, data = Species.wanted)
+summary(PlotandSpecies.model)
+
+```
+Unfortunately, there are too many unique plots to visualize this linear regression, but the results indicate that, in general, plot and species have a significant influence on the height of the tree. These results will be confirmed with an ANOVA in the following analysis section.
+
 \newpage
 
 # Analysis
@@ -307,8 +313,25 @@ describe the results of the code but dont show it
 -hide codes and explain without them (this was sig different than this then show degrees of freedom etc, but add into explanation)
 -1 to 2 visulizations per argument 
 
-In order to properly understand the statistical differences present in mean species height, an ANOVA test will be conducted between each species in pairs. 
+## ANOVA Tests
+```{r ANOVAs for HT and DIA correlation, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+#ANOVA with species interaction
+species.model.anova <- aov(HT ~ DIA + Species, 
+                           data = Species.wanted)
+summary(species.model.anova)
+
+#ANOVA with species and plot interaction
+PlotandSpecies.model.anova <- aov(HT ~ DIA + Species + PLOT, 
+                                  data = Species.wanted)
+summary(PlotandSpecies.model.anova)
+
+```
+The ANOVA results suggest that diameter has the highest influence on tree height, as expected. Additionally, it suggests that both species and plot number have a significant influence on tree height. The influence of plot is smaller than that of diameter and tree species. These results will be explored further in the following sections. 
+
 ##ANOVA Test to Compare Mean Height Differences Between Species 
+In order to properly understand the statistical differences present in mean species height, an ANOVA test will be conducted between each species in pairs. 
+
 ```{r echo=FALSE}
 #Mean Height of Black Spruce compared to Mean Height of White Spruce
 b.w.spruces <- Species.wanted %>%
@@ -400,6 +423,25 @@ print(all_TukeyResults)
 
 ```
 According to the Tukey HSD Test, the largest difference in tree height means is between black spruce and white spruce (17.28 feet), followed by the difference of Mountain Hemlock and Black Spruce (14.89 feet). The trees with the least mean height difference are White Spruce and Mountain Hemlock (2.38 feet). The confidence intervals between true differences in height ranged throughout species with the biggest confidence interval being Mountain Hemlock versus Lodgepole Pine with a lower bound of 5.84 feet and a higher bound of 10.59 feet. The smallest confidence interval was found between Mountain Hemlock and Black Spruce and Lodgepole Pine and Black Spruce (14.11 to 15.69 feet, and 7.03 and 8.64 feet, respectively). Lastly, all p-values have stayed statistically significant. This means we can reject the null hypothesis and accept the alternative hypothesis: tree species in Alaska do vary by height. 
+
+## Visualizing Interactions with Plot Differences
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="This figure displays a random sample of Plots from our dataset. As shown in the figure, the average heights vary both by species and by plot, demonstrating that plot is a significant influencing factor on tree height along with species and diameter." }
+random_plot_subset <- Species.wanted[sample(nrow(Species.wanted), size = 15, 
+                                            replace = FALSE), ]
+
+#Plot showing relationship between HT, PLOT, and Species (random sample)
+ggplot(random_plot_subset, aes(x = Species, y = HT, color = PLOT)) +
+  geom_boxplot() +
+  labs(title = "Tree Height by Species and Plot (Random Sample)",
+       x = "Species",
+       y = "Height",
+       color = "Plot Code") +
+  theme(axis.text.x = element_text(angle = -45, hjust = 1)) +
+  theme(legend.position = "right")+
+  scale_x_discrete(position = "top")
+
+```
+This data visualization emphasizes the results from the ANOVA tests, showing that plot is also a significant influencing factor on tree height. There were too many unique plots to visualize the results from the linear regression or show all plots in this figure, but even this random sample reemphasizes the findings from our ANOVA test. 
 
 ## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>
 Q: How does tree height vary across Alaska’s forests?

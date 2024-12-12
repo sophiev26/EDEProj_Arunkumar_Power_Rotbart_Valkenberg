@@ -10,9 +10,7 @@ editor_options:
 \newpage
 \tableofcontents 
 \newpage
-\listoftables 
-\newpage
-\listoffigures 
+\listoffigures
 \newpage
 
 # Setting up our R Workspace
@@ -25,19 +23,17 @@ library(tidyverse)
 
 ```
 
-
-```{r working directory, echo=FALSE}
+```{r working directory, echo=TRUE}
 # Set your working directory
 getwd()
-setwd("/home/guest/Project/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
+setwd("/home/guest/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
 
 ```
 
-
-```{r import file, echo=FALSE}
+```{r import file, echo=TRUE}
 # Load your datasets
 Ak_data <- 
-  read.csv('~/Project/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
+  read.csv('~/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
 ```
 
 # Rationale and Research Questions
@@ -55,9 +51,8 @@ Following questions to help us further understand the differences in these speci
 -How does this height vary with species?
 -How does this height vary with plot?
 
-
 # Data Wrangling 
-```{r Data Wrangling, echo=FALSE}
+```{r Data Wrangling, echo=TRUE}
 #Filtering for wanted columns
 Ak_data.wrangled <- Ak_data %>% 
   select(PLOT, SPCD, DIA, HT)
@@ -77,7 +72,7 @@ Species.wanted$PLOT <- as.factor(Species.wanted$PLOT)
 ```
 
 ## GGPlot Theme Setup 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Set your ggplot theme
 
 our_theme <- theme(
@@ -93,185 +88,6 @@ our_theme <- theme(
 theme_set(our_theme)
 ```
 
-
-# Linear Regressions
-## Correlation between Height and Diameter for all Species
-```{r}
-#Linear Regression to see correlation between HT and DIA for all Species in Data
-All.species.AK <- lm(HT ~ DIA, data = Ak_data.wrangled)
-summary(All.species.AK)
-
-ggplot(Ak_data.wrangled, aes(x = DIA, y = HT)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Tree Height vs Diameter in Alaska",
-       x = "Diameter",
-       y = "Height")
-
-```
-
-
-## Correlation between Height and Diameter taking Species of Interest into Account
-```{r}
-#Linear Regression to see correlation between HT and DIA taking into account 
-#four species. 
-species.model <- lm(HT ~ DIA + Species, data = Species.wanted)
-summary(species.model)
-
-ggplot(Species.wanted, aes(x = DIA, y = HT, color = Species)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Tree Height vs Diameter by Species",
-       x = "Diameter",
-       y = "Height",
-       color = "Species Code")
-
-```
-
-## Correlation between Height and Diameter taking Species of Interest and Plot ID into Account
-```{r, echo=FALSE}
-#Linear regression to see correlation between HT and DIA taking into account
-#four species and plot ID
-PlotandSpecies.model <- lm(HT ~ DIA + Species + PLOT, data = Species.wanted)
-summary(PlotandSpecies.model)
-
-```
-
-## ANOVA Tests
-```{r, echo=FALSE}
-
-#ANOVA with species interaction
-species.model.anova <- aov(HT ~ DIA + Species, 
-                           data = Species.wanted)
-summary(species.model.anova)
-
-#ANOVA with species and plot interaction
-PlotandSpecies.model.anova <- aov(HT ~ DIA + Species + PLOT, 
-                                  data = Species.wanted)
-summary(PlotandSpecies.model.anova)
-
-```
-
-The ANOVA results suggest that diameter has the highest influence on tree height, as expected. Additionally, it suggests that both species and plot number have a significant influence on tree height. The influence of plot is smaller than that of diameter and tree species. These results will be explored further in the following sections. 
-
-## Mean Height Comparisons 
-```{r}
-#Boxplot of Tree Height by Species
-ggplot(Species.wanted, aes(x = Species, y = HT, color = Species)) +
-  geom_boxplot()+
-  labs(title = "Tree Height by Species",
-       x = "Species",
-       y = "Height",
-       color = "Species Code")
-```
-
-
-```{r}
-#Mean Height of Black Spruce compared to Mean Height of White Spruce
-b.w.spruces <- Species.wanted %>%
-  filter(SPCD %in% c(94, 95))
-BlackvWhiteSpruce <- aov(HT~Species, data = b.w.spruces)
-
-summary.aov(BlackvWhiteSpruce)
-
-#Mean Height of White Spruce compared to Mean Height of Lodgepole Pine
-w.spruce.l.pine <- Species.wanted %>%
-  filter(SPCD %in% c(94, 108))
-WhiteSprucevLodgePine <- aov(HT~Species, data = w.spruce.l.pine)
-
-summary.aov(WhiteSprucevLodgePine)
-
-#Mean Height of Lodgepole Pine compared to Mean Height of Mountain Hemlock
-l.pine.m.hemlock <- Species.wanted %>%
-  filter(SPCD %in% c(108, 264))
-LodgePinevMountHemlock <- aov(HT~Species, data = l.pine.m.hemlock)
-
-summary.aov(LodgePinevMountHemlock)
-
-#Mean Height of Black Spruce compared to Mean Height of Mountain Hemlock
-b.spruce.m.hemlock <- Species.wanted %>%
-  filter(SPCD %in% c(95, 264))
-BlackSprucevMountHemlock <- aov(HT~Species, data = b.spruce.m.hemlock)
-
-summary.aov(BlackSprucevMountHemlock)
-
-#Mean Height of Black Spruce compared to Mean Height of Lodgepole Pine
-b.spruce.l.pine <- Species.wanted %>%
-  filter(SPCD %in% c(95, 108))
-BlackSprucevLodgePine <- aov(HT~Species, data = b.spruce.l.pine)
-
-summary.aov(BlackSprucevLodgePine)
-
-#Mean Height of White Spruce compared to Mean Height of Mountain Hemlock
-w.spruce.m.hemlock <- Species.wanted %>%
-  filter(SPCD %in% c(95, 108))
-WhiteSprucevMountHemlock <- aov(HT~Species, data = w.spruce.m.hemlock)
-
-summary.aov(WhiteSprucevMountHemlock)
-```
-
-
-```{r}
-#Because the anova test shows that all results are significant,
-#a pairwise comparison between species can be conducted to show the confidence 
-#interval, p-value and difference in each species 
-
-TukeyResults1 <- TukeyHSD(WhiteSprucevLodgePine)
-TukeyResults2 <- TukeyHSD(LodgePinevMountHemlock)
-TukeyResults3 <- TukeyHSD(BlackSprucevMountHemlock)
-TukeyResults4 <- TukeyHSD(BlackSprucevLodgePine)
-TukeyResults5 <- TukeyHSD(BlackSprucevLodgePine)
-TukeyResults6 <- TukeyHSD(BlackSprucevLodgePine)
-
-TukeyResults1
-TukeyResults2
-TukeyResults3
-TukeyResults4
-TukeyResults5
-TukeyResults6
-
-TukeyResults1_df <- as.data.frame(TukeyResults1$Species) %>%
-  mutate(Comparison = "White Spruce vs Lodgepole Pine")
-
-TukeyResults2_df <- as.data.frame(TukeyResults2$Species) %>%
-  mutate(Comparison = "Lodgepole Pine vs Mountain Hemlock")
-
-TukeyResults3_df <- as.data.frame(TukeyResults3$Species) %>%
-  mutate(Comparison = "Black Spruce vs Mountain Hemlock")
-
-TukeyResults4_df <- as.data.frame(TukeyResults4$Species) %>%
-  mutate(Comparison = "Black Spruce vs Lodgepole Pine")
-
-TukeyResults5_df <- as.data.frame(TukeyResults1$Species) %>%
-  mutate(Comparison = "White Spruce vs Black Spruce")
-
-TukeyResults6_df <- as.data.frame(TukeyResults1$Species) %>%
-  mutate(Comparison = "White Spruce vs Mountain Hemlock")
-
-all_TukeyResults <- bind_rows(TukeyResults1_df,TukeyResults2_df, TukeyResults3_df, TukeyResults4_df, TukeyResults5_df, TukeyResults5_df)
-
-print(all_TukeyResults)
-
-```
-
-
-## Visualizing Interactions with Plot Differences
-```{r}
-random_plot_subset <- Species.wanted[sample(nrow(Species.wanted), size = 15, 
-                                            replace = FALSE), ]
-
-#Plot showing relationship between HT, PLOT, and Species (random sample)
-ggplot(random_plot_subset, aes(x = Species, y = HT, color = PLOT)) +
-  geom_boxplot() +
-  labs(title = "Tree Height by Species and Plot (Random Sample)",
-       x = "Species",
-       y = "Height",
-       color = "Plot Code") +
-  theme(axis.text.x = element_text(angle = -45, hjust = 1)) +
-  theme(legend.position = "right")+
-  scale_x_discrete(position = "top")
-
-```
 \newpage
 
 # Dataset Information
@@ -293,17 +109,62 @@ Once we downloaded the dataset, our process of data wrangling involved different
 \newpage
 
 # Exploratory Analysis 
-graphs for variables of interest, maps, basic stuff people might want to know about the data 
+
+## Linear Regressions
+## Correlation between Height and Diameter for all Species
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="This figure displays the correlation between height and diameter for all species"}
+#Linear Regression to see correlation between HT and DIA for all Species in Data
+All.species.AK <- lm(HT ~ DIA, data = Ak_data.wrangled)
+summary(All.species.AK)
+
+ggplot(Ak_data.wrangled, aes(x = DIA, y = HT)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Tree Height vs Diameter in Alaska",
+       x = "Diameter",
+       y = "Height")
+```
+This first linear regression that is run shows the correlation between height and diameter at breast height for all species and trees sampled within the data set. Looking at the results it is clear there is a direct positive correlation between height and diameter. As one increases the other does as well. 
+
+## Correlation between Height and Diameter taking Species of Interest into Account
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="This figure displays the correlation between height and diameter for selected species"}
+#Linear Regression to see correlation between HT and DIA taking into account 
+#four species. 
+species.model <- lm(HT ~ DIA + Species, data = Species.wanted)
+summary(species.model)
+
+ggplot(Species.wanted, aes(x = DIA, y = HT, color = Species)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Tree Height vs Diameter by Species",
+       x = "Diameter",
+       y = "Height",
+       color = "Species Code")
+
+```
+Now going specifically into choosen species. We wanted to see the correlation between height and dbh for four specific species, Black Spruce, Lodgepole Pine, Mountain Hemlock, White Spruce. From our graph we are able to see the different correlations between each species. With Black spruce's height being less effected by Diameter than the other species. 
+
+## Mean Height Comparisons 
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="This figure displays a bloxplot showing the differences in mean and distribution between height for select species"}
+#Boxplot of Tree Height by Species
+ggplot(Species.wanted, aes(x = Species, y = HT, color = Species)) +
+  geom_boxplot()+
+  labs(title = "Tree Height by Species",
+       x = "Species",
+       y = "Height",
+       color = "Species Code")
+```
+The boxplot created here was key in visualizing the distribution of data for each species selected. Also gave an idea of how different each mean height of the different species were. Allowing clarification in this overloaded dataset, before moving on into deeper analysis. 
 
 ## Correlation between Height and Diameter taking Species of Interest and Plot ID into Account
-```{r Correlation between Height + DIA + SPCD + PLOT}
+```{r Correlation between Height + DIA + SPCD + PLOT, echo=TRUE, include=FALSE}
 #Linear regression to see correlation between HT and DIA taking into account
 #four species and plot ID
 PlotandSpecies.model <- lm(HT ~ DIA + Species + PLOT, data = Species.wanted)
 summary(PlotandSpecies.model)
 
 ```
-Unfortunately, there are too many unique plots to visualize this linear regression, but the results indicate that, in general, plot and species have a significant influence on the height of the tree. These results will be confirmed with an ANOVA in the following analysis section.
+Unfortunately, there are too many unique plots to visualize this linear regression, but the results indicate that, in general, plot and species have a significant influence on the height of the tree. These results will be confirmed with an ANOVA in the following analysis section. Linear regression was run but results are to long to show in the document, results showed most of the plots significantly influenced height so we included it in the anova. Output is shown at the very end of the assignment if needed. 
 
 \newpage
 
@@ -465,13 +326,12 @@ Q: How does tree height vary across Alaska’s forests?
 <add references here if relevant, otherwise delete this section> 
 
 
-#Appendix 
-
-
-
-```{r}
+# Appendix 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
 
 ```
+
+
 
 
 

@@ -98,6 +98,8 @@ Data was collected using both remote sensing and ground sampling. Remote sensing
 
 Once we downloaded the dataset, our process of data wrangling involved differentiating the trees by species. We placed a special emphasis on this due to how the dataset only provides species codes, not the the names of the species themselves. Therefore, we filtered for the four most common species, changing their codes into their species names in a new separate column. We also turned everything in this species column to a factor in order to for it to fit in the analysis. 
 
+                       Table: Terms and Units for Alaska SITETREE Dataset
+
 | Item Name | Value |
 |-------:|:------|
 |INVYR|Year of inventory|
@@ -289,7 +291,7 @@ print(all_TukeyResults)
 According to the Tukey HSD Test, the largest difference in tree height means is between black spruce and white spruce (17.28 feet), followed by the difference of Mountain Hemlock and Black Spruce (14.89 feet). The trees with the least mean height difference are White Spruce and Mountain Hemlock (2.38 feet). The confidence intervals between true differences in height ranged throughout species with the biggest confidence interval being Mountain Hemlock versus Lodgepole Pine with a lower bound of 5.84 feet and a higher bound of 10.59 feet. The smallest confidence interval was found between Mountain Hemlock and Black Spruce and Lodgepole Pine and Black Spruce (14.11 to 15.69 feet, and 7.03 and 8.64 feet, respectively). Lastly, all p-values have stayed statistically significant. This means we can reject the null hypothesis and accept the alternative hypothesis: tree species in Alaska do vary by height. 
 
 ## Visualizing Interactions with Plot Differences
-```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="This figure displays a random sample of Plots from our dataset. As shown in the figure, the average heights vary both by species and by plot, demonstrating that plot is a significant influencing factor on tree height along with species and diameter." }
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="This figure displays a random sample of Plots from our dataset. As shown in the figure, the average heights vary both by species and by plot, demonstrating that plot is a significant influencing factor on tree height along with species and diameter"}
 random_plot_subset <- Species.wanted[sample(nrow(Species.wanted), size = 15, 
                                             replace = FALSE), ]
 
@@ -316,19 +318,11 @@ Q: How does tree height vary across Alaska’s forests?
 \newpage
 
 # Summary and Conclusions
-- Conclusions 
-Tree species in Alaska vary significantly by height
-Diameter best effect, though plot has less of a significant effect
+Through our analysis, we came to the conclusion that the trees in our Alaskan dataset differ significantly by height, allowing us to reject our null hypothesis. In specifics, diameter had the most significant effect on height, with plotID having the least significant effect, and species in between. 
 
--Summary
-Picked topic due to forestry background and interest in a non-Carolina ecosystem
-Found data from USFS and wrangled it for four species
-Created correlations to find general trends between variables
-e.g. black spruce height being less effected vy diameter than other species
+Through our interest in non-Carolina forests, we come top with the question on how tree height varies in Alaskan forests, with an emphasis on how diameter, species, and plot ID vary with height. After wrangling the data for four specific species to use in our analysis, we created correlations to find exploratory trends between the variables. An example of one of the trends we found was the the the height of black spruce trees is less affected by diameter than other species. 
 
-Ran anova on each species, all were significant 
-Ran tukey LSD because of that, list greatest and least difference
-Confirmed the alternative hypothesis
+To determine significance in height between species, we ran an ANOVA for each unique pair of species, a total of six ANOVAs. Because each pair displayed a significant p-value, we ran Tukey HSD tests to determine not only which species pairs were the most significantly different, but also the magnitude of their differences in average height. The most significant difference was white spruce and black spruce, with an average height difference of 17.28 ft. The least significant difference was between white spruce and mountain hemlock (2.38 ft). These significant differences in tree height confirmed the rejection of our null hypothesis. 
 
 
 

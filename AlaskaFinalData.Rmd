@@ -1,5 +1,5 @@
 ---
-title: "Variability in tree height and diameter across different"
+title: "Variability in tree height and diameter across select species in Alaska, USA"
 author: "Vignesh Arunkumar, Aidan Power, Brynn Rotbart, Sophie Valkenberg"
 date: "2024-12-03"
 output: 
@@ -29,14 +29,15 @@ library(tidyverse)
 ```{r working directory, echo=TRUE}
 # Set your working directory
 getwd()
-setwd("/home/guest/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
+setwd("/home/guest/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
 
 ```
 
 ```{r import file, echo=TRUE}
 # Load your datasets
 Ak_data <- 
-  read.csv('~/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/Data_Overall/Raw/AK_SITETREE.csv')
+  read.csv('~/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
+
 ```
 
 # Rationale and Research Questions
@@ -151,7 +152,7 @@ ggplot(Species.wanted, aes(x = DIA, y = HT, color = Species)) +
 
 ```
 
-Now going specifically into choosen species. We wanted to see the correlation between height and dbh for four specific species, Black Spruce, Lodgepole Pine, Mountain Hemlock, White Spruce. From our graph we are able to see the different correlations between each species. With Black spruce's height being less effected by Diameter than the other species. 
+Now going specifically into chosen species. We wanted to see the correlation between height and dbh for four specific species, Black Spruce, Lodgepole Pine, Mountain Hemlock, White Spruce. From our graph we are able to see the different correlations between each species. With Black spruce's height being less effected by Diameter than the other species. 
 
 ## Mean Height Comparisons 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="This figure displays a bloxplot showing the differences in mean and distribution between height for select species"}

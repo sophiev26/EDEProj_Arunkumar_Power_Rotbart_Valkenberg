@@ -36,7 +36,7 @@ setwd("/home/guest/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
 ```{r import file, echo=TRUE}
 # Load your datasets
 Ak_data <- 
-  read.csv('~/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
+  read.csv('~/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/Data_Overall/Raw/AK_SITETREE.csv')
 ```
 
 # Rationale and Research Questions
@@ -72,6 +72,8 @@ Species.wanted <- Species.wanted %>%
   ))
 Species.wanted$Species <- as.factor(Species.wanted$Species)
 Species.wanted$PLOT <- as.factor(Species.wanted$PLOT)
+
+write.csv(Species.wanted, file = '~/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/Data_Overall/Processed/AK_SITETREE_SpeciesWanted.csv', row.names = FALSE)
 ```
 
 ## GGPlot Theme Setup 
@@ -129,6 +131,7 @@ ggplot(Ak_data.wrangled, aes(x = DIA, y = HT)) +
        x = "Diameter",
        y = "Height")
 ```
+
 This first linear regression that is run shows the correlation between height and diameter at breast height for all species and trees sampled within the data set. Looking at the results it is clear there is a direct positive correlation between height and diameter. As one increases the other does as well. 
 
 ## Correlation between Height and Diameter taking Species of Interest into Account
@@ -147,6 +150,7 @@ ggplot(Species.wanted, aes(x = DIA, y = HT, color = Species)) +
        color = "Species Code")
 
 ```
+
 Now going specifically into choosen species. We wanted to see the correlation between height and dbh for four specific species, Black Spruce, Lodgepole Pine, Mountain Hemlock, White Spruce. From our graph we are able to see the different correlations between each species. With Black spruce's height being less effected by Diameter than the other species. 
 
 ## Mean Height Comparisons 
@@ -159,6 +163,7 @@ ggplot(Species.wanted, aes(x = Species, y = HT, color = Species)) +
        y = "Height",
        color = "Species Code")
 ```
+
 The boxplot created here was key in visualizing the distribution of data for each species selected. Also gave an idea of how different each mean height of the different species were. Allowing clarification in this overloaded dataset, before moving on into deeper analysis. 
 
 ## Correlation between Height and Diameter taking Species of Interest and Plot ID into Account
@@ -169,6 +174,7 @@ PlotandSpecies.model <- lm(HT ~ DIA + Species + PLOT, data = Species.wanted)
 summary(PlotandSpecies.model)
 
 ```
+
 Unfortunately, there are too many unique plots to visualize this linear regression, but the results indicate that, in general, plot and species have a significant influence on the height of the tree. These results will be confirmed with an ANOVA in the following analysis section. Linear regression was run but results are to long to show in the document, results showed most of the plots significantly influenced height so we included it in the anova. Output is shown at the very end of the assignment if needed. 
 
 \newpage
@@ -193,6 +199,7 @@ PlotandSpecies.model.anova <- aov(HT ~ DIA + Species + PLOT,
 summary(PlotandSpecies.model.anova)
 
 ```
+
 The ANOVA results suggest that diameter has the highest influence on tree height, as expected. Additionally, it suggests that both species and plot number have a significant influence on tree height. The influence of plot is smaller than that of diameter and tree species. These results will be explored further in the following sections. 
 
 ##ANOVA Test to Compare Mean Height Differences Between Species 
@@ -241,7 +248,8 @@ WhiteSprucevMountHemlock <- aov(HT~Species, data = w.spruce.m.hemlock)
 
 summary.aov(WhiteSprucevMountHemlock)
 ```
-Each ANOVA pairing between species is significantly different, having a p value below 0.(05)?. This means that the null hyptohesis is rejected, and the alternative hypothesis is accepted: tree height does vary significantly between species. 
+
+Each ANOVA pairing between species is significantly different, having a p value below 0.05. This means that the null hyptohesis is rejected, and the alternative hypothesis is accepted: tree height does vary significantly between species. 
 
 Because the anova test shows that all results are significant a pairwise comparison between species can be conducted using a Tukey Test HSD to show the confidence interval, p-value and difference in each species. 
 
@@ -288,6 +296,7 @@ all_TukeyResults <- bind_rows(TukeyResults1_df,TukeyResults2_df, TukeyResults3_d
 print(all_TukeyResults)
 
 ```
+
 According to the Tukey HSD Test, the largest difference in tree height means is between black spruce and white spruce (17.28 feet), followed by the difference of Mountain Hemlock and Black Spruce (14.89 feet). The trees with the least mean height difference are White Spruce and Mountain Hemlock (2.38 feet). The confidence intervals between true differences in height ranged throughout species with the biggest confidence interval being Mountain Hemlock versus Lodgepole Pine with a lower bound of 5.84 feet and a higher bound of 10.59 feet. The smallest confidence interval was found between Mountain Hemlock and Black Spruce and Lodgepole Pine and Black Spruce (14.11 to 15.69 feet, and 7.03 and 8.64 feet, respectively). Lastly, all p-values have stayed statistically significant. This means we can reject the null hypothesis and accept the alternative hypothesis: tree species in Alaska do vary by height. 
 
 ## Visualizing Interactions with Plot Differences
@@ -307,6 +316,7 @@ ggplot(random_plot_subset, aes(x = Species, y = HT, color = PLOT)) +
   scale_x_discrete(position = "top")
 
 ```
+
 This data visualization emphasizes the results from the ANOVA tests, showing that plot is also a significant influencing factor on tree height. There were too many unique plots to visualize the results from the linear regression or show all plots in this figure, but even this random sample reemphasizes the findings from our ANOVA test. 
 
 ## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>

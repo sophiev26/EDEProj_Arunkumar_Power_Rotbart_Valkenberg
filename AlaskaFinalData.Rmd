@@ -2,11 +2,14 @@
 title: "Variability in tree height and diameter across different"
 author: "Vignesh Arunkumar, Aidan Power, Brynn Rotbart, Sophie Valkenberg"
 date: "2024-12-03"
-output: pdf_document
-fig_caption: True
+output: 
+  pdf_document: 
+    fig_caption: true
 editor_options: 
   chunk_output_type: console
 ---
+
+
 \newpage
 \tableofcontents 
 \newpage
@@ -26,14 +29,14 @@ library(tidyverse)
 ```{r working directory, echo=TRUE}
 # Set your working directory
 getwd()
-setwd("/home/guest/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
+setwd("/home/guest/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
 
 ```
 
 ```{r import file, echo=TRUE}
 # Load your datasets
 Ak_data <- 
-  read.csv('~/FinalEDEProject/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
+  read.csv('~/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/AK_SITETREE.csv')
 ```
 
 # Rationale and Research Questions
@@ -236,7 +239,7 @@ WhiteSprucevMountHemlock <- aov(HT~Species, data = w.spruce.m.hemlock)
 
 summary.aov(WhiteSprucevMountHemlock)
 ```
-Each ANOVA pairing between species is significantly different, having a p value below 0. This means that the null hyptohesis is rejected, and the alternative hypothesis is accepted: tree height does vary significantly between species. 
+Each ANOVA pairing between species is significantly different, having a p value below 0.(05)?. This means that the null hyptohesis is rejected, and the alternative hypothesis is accepted: tree height does vary significantly between species. 
 
 Because the anova test shows that all results are significant a pairwise comparison between species can be conducted using a Tukey Test HSD to show the confidence interval, p-value and difference in each species. 
 
@@ -310,20 +313,31 @@ Q: How does tree height vary across Alaska’s forests?
 -	How does this height vary with species?
 -How does this height vary with plot?
 
-## Question 2: 
-
-
-
-
 \newpage
 
 # Summary and Conclusions
+- Conclusions 
+Tree species in Alaska vary significantly by height
+Diameter best effect, though plot has less of a significant effect
+
+-Summary
+Picked topic due to forestry background and interest in a non-Carolina ecosystem
+Found data from USFS and wrangled it for four species
+Created correlations to find general trends between variables
+e.g. black spruce height being less effected vy diameter than other species
+
+Ran anova on each species, all were significant 
+Ran tukey LSD because of that, list greatest and least difference
+Confirmed the alternative hypothesis
+
 
 
 \newpage
 
 # References
-<add references here if relevant, otherwise delete this section> 
+U.S. Forest Service. (2020). Forest Inventory and Analysis Database (FIADB) user guides: Volume database description (version 9.2). U.S. Department of Agriculture. Retrieved December 11, 2024, from https://www.fia.fs.fed.us/library/database-descriptions/
+
+U.S. Forest Service. (n.d.). Interior Alaska Inventory - Pacific Northwest Forest Inventory and Analysis (PNW-FIA). U.S. Department of Agriculture. Retrieved December 11, 2024, from https://research.fs.usda.gov/pnw/projects/pnwfiainterioralaskainventory
 
 
 # Appendix 

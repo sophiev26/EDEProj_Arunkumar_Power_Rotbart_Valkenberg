@@ -1,5 +1,5 @@
 ---
-title: "Variability in tree height and diameter across different"
+title: "Variability in tree height and diameter across different species"
 author: "Vignesh Arunkumar, Aidan Power, Brynn Rotbart, Sophie Valkenberg"
 date: "2024-12-03"
 output: 

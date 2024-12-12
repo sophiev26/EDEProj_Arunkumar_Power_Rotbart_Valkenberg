@@ -29,7 +29,7 @@ library(tidyverse)
 ```{r working directory, echo=TRUE}
 # Set your working directory
 getwd()
-setwd("/home/guest/Project/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
+setwd("/home/guest/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
 
 ```
 
@@ -37,7 +37,7 @@ setwd("/home/guest/Project/EDEProj_Arunkumar_Power_Rotbart_Valkenberg")
 # Load your datasets
 Ak_data <- 
   read.csv(
-    '~/Project/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/Data_Overall/Raw/AK_SITETREE.csv')
+    '~/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/Data_Overall/Raw/AK_SITETREE.csv')
 
 ```
 
@@ -78,8 +78,10 @@ Species.wanted <- Species.wanted %>%
 Species.wanted$Species <- as.factor(Species.wanted$Species)
 Species.wanted$PLOT <- as.factor(Species.wanted$PLOT)
 
-write.csv(Species.wanted, file = '~/Project/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/Data_Overall/Processed/AK_SITETREE_SpeciesWanted.csv', 
-          row.names = FALSE)
+write.csv(Species.wanted, 
+file =
+  '~/EDEProj_Arunkumar_Power_Rotbart_Valkenberg/Data_Overall/Processed/AK_SITETREE_SpeciesWanted.csv',
+row.names = FALSE)
 ```
 
 ## GGPlot Theme Setup 
